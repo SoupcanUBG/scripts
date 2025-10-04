@@ -1,0 +1,107 @@
+#!/bin/bash
+
+DATA_DIR="$HOME/.ubg/"
+DATA_FILE="$DATA_DIR/l.toml"
+
+mkdir -p "$DATA_DIR"
+touch "$DATA_FILE"
+
+declare -A COMMANDS
+
+# === Load commands from TOML ===
+while IFS="=" read -r k v; do
+    [[ "$k" =~ ^[[:space:]]*# ]] && continue   # skip comments
+    [[ -z "$k" ]] && continue                  # skip empty lines
+    k=$(echo "$k" | xargs)                     # trim
+    v=$(echo "$v" | xargs)                     # trim
+    COMMANDS["$k"]="$v"
+done < "$DATA_FILE"
+
+# === Functions ===
+show_help() {
+    echo "Usage: ubg <command> [args]"
+    echo
+    echo "Available commands:"
+    if [ ${#COMMANDS[@]} -eq 0 ]; then
+        echo "  (none defined yet — use 'ubg set')"
+    else
+        for cmd in "${!COMMANDS[@]}"; do
+            # Don't print reserved ones
+            [[ "$cmd" == "serve" ]] && continue
+            printf "  %-12s %s\n" "$cmd" "${COMMANDS[$cmd]}"
+        done
+    fi
+    echo
+    echo "Special commands:"
+    echo "  ubg set <name> <command>    # add or overwrite a link"
+    echo "  ubg del <name>              # delete a link"
+    echo "  ubg list                    # show all links"
+    echo "  ubg serve [port]            # start a Python http.server in ~/.ubg"
+    echo "  ubg help                    # show this menu"
+}
+
+save_command() {
+    local name="$1"
+    if [ "$name" = "serve" ]; then
+        echo "Error: 'serve' is a reserved command and cannot be set."
+        exit 1
+    fi
+    local cmd="https://$2"
+    grep -v "^$name\s*=" "$DATA_FILE" > "$DATA_FILE.tmp" && mv "$DATA_FILE.tmp" "$DATA_FILE"
+    echo "$name = \"$cmd\"" >> "$DATA_FILE"
+}
+
+delete_command() {
+    local name="$1"
+    if [ "$name" = "serve" ]; then
+        echo "Error: 'serve' is a reserved command and cannot be deleted."
+        exit 1
+    fi
+    grep -v "^$name\s*=" "$DATA_FILE" > "$DATA_FILE.tmp" && mv "$DATA_FILE.tmp" "$DATA_FILE"
+}
+
+# === Main logic ===
+case "$1" in
+    help|"")
+        show_help
+        ;;
+
+    set)
+        if [ -n "$2" ] && [ -n "$3" ]; then
+            save_command "$2" "${*:3}"
+            echo "Saved: $2 = ${*:3}"
+        else
+            echo "Usage: ubg set <name> <command>"
+        fi
+        ;;
+
+    del)
+        if [ -n "$2" ]; then
+            delete_command "$2"
+            echo "Deleted: $2"
+        else
+            echo "Usage: ubg del <name>"
+        fi
+        ;;
+
+    list)
+        grep -v "^serve\s*=" "$DATA_FILE" || echo "No commands saved."
+        ;;
+
+    serve)
+        PORT="${2:-8000}"
+        echo "Serving $DATA_DIR at http://localhost:$PORT"
+        cd "$DATA_DIR" && python3 -m http.server "$PORT"
+        ;;
+
+    *)
+        if [[ -n "${COMMANDS[$1]}" ]]; then
+            eval "${COMMANDS[$1]} ${*:2}"
+        else
+            echo "Unknown command: $1"
+            echo "Use: ubg help"
+            exit 1
+        fi
+        ;;
+esac
+

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>MA Install Tutorial</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      padding: 2rem;
+      background: #121212;
+      color: #e0e0e0;
+    }
+    h1 {
+      color: #ffffff;
+      text-align: center;
+    }
+    img {
+      display: block;
+      margin: 2rem auto;
+      max-width: 100%;
+      border: 2px solid #333;
+      border-radius: 6px;
+    }
+    pre {
+      background: #1e1e1e;
+      padding: 1rem;
+      border-radius: 6px;
+      overflow-x: auto;
+      color: #e0e0e0;
+      font-family: monospace;
+      font-size: 0.95rem;
+      position: relative;
+    }
+    section {
+      max-width: 800px;
+      margin: 0 auto 3rem auto;
+    }
+    h2 {
+      color: #f0f0f0;
+      margin-bottom: 0.5rem;
+    }
+    p {
+      line-height: 1.5;
+    }
+    .copy-btn {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      background: #444;
+      color: #eee;
+      border: none;
+      padding: 0.3rem 0.6rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      transition: opacity 0.3s, background 0.2s;
+      opacity: 0;
+    }
+    pre:hover .copy-btn {
+      opacity: 1;
+    }
+    .copy-btn:hover {
+      background: #666;
+    }
+  </style>
+</head>
+<body>
+  <h1>MA Install & Usage Tutorial</h1>
+
+
+  <section>
+    <h2>How to Use MA</h2>
+    <p>After installing MA to <code>/usr/local/bin/ma</code>, you can run it directly from your terminal:</p>
+    <pre id="ma-usage">[toby@archlinux .bin]$ ma
+Usage: ma &lt;command&gt; [args]
+
+Available commands:
+  (none defined yet — use 'ma set')
+
+Special commands:
+  ma set &lt;name&gt; &lt;command&gt;    # add or overwrite a shortcut
+  ma del &lt;name&gt;                  # delete a shortcut
+  ma list                              # show all commands
+  ma help                              # show this menu
+[toby@archlinux .bin]$
+      <button class="copy-btn" onclick="copyCode()">Copy</button>
+    </pre>
+    <p>You can define your own shortcuts with <code>ma set &lt;name&gt; &lt;command&gt;</code>, remove them with <code>ma del &lt;name&gt;</code>, and list all shortcuts with <code>ma list</code>.</p>
+  </section>
+
+  <script>
+    function copyCode() {
+      const text = document.getElementById('ma-usage').innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        const btn = document.querySelector('.copy-btn');
+        btn.textContent = 'Copied!';
+        setTimeout(() => btn.textContent = 'Copy', 1500);
+      });
+    }
+  </script>
+</body>
+</html>
+

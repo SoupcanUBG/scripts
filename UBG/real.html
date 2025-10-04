@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>majority</title>
+<style>
+    body {
+        margin: 0;
+        background: #f0f0f0;
+        font-family: sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 20px;
+    }
+
+    #button-container {
+        width: 100%;
+        max-width: 300px;
+        text-align: center;
+    }
+
+    button {
+        display: block;
+        width: 100%;
+        padding: 12px;
+        margin: 10px 0;
+        font-size: 16px;
+        cursor: pointer;
+        box-sizing: border-box;
+    }
+</style>
+</head>
+<body>
+
+<h1>majority</h1>
+<div id="button-container"></div>
+
+<script>
+async function loadToml() {
+    try {
+        const res = await fetch("l.toml");
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        const text = await res.text();
+
+        const container = document.getElementById("button-container");
+
+        for (let line of text.split(/\r?\n/)) {
+            line = line.trim();
+            if (!line || line.startsWith("#")) continue;
+
+            const [key, value] = line.split("=");
+            if (key && value) {
+                const name = key.trim();
+                const url = value.trim().replace(/^"|"$/g, "");
+
+                const btn = document.createElement("button");
+                btn.textContent = name;
+                btn.onclick = () => window.location.href = url; // navigate in the same tab
+                container.appendChild(btn);
+            }
+        }
+
+    } catch (err) {
+        console.error("Error reading l.toml:", err);
+        document.getElementById("button-container").innerHTML = "<p>Failed to load l.toml</p>";
+    }
+}
+
+window.addEventListener('load', loadToml);
+</script>
+
+</body>
+</html>
+
