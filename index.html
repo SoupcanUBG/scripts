@@ -97,16 +97,6 @@
     </ul>
   </main>
 
-  <script>
-    function copyCode() {
-      const code = "bash <(curl -fsSL https://notr8.codeberg.page/.scripts/setup.sh)";
-      navigator.clipboard.writeText(code).then(() => {
-        const btn = document.querySelector('.copy-btn');
-        btn.textContent = "Copied!";
-        setTimeout(() => btn.textContent = "Copy", 1500);
-      });
-    }
-  </script>
 </body>
 </html>
 

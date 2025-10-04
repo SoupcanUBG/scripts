@@ -89,7 +89,7 @@
     <p>To run the setup script, copy and paste the following command:</p>
     <div class="code-box">
       <button class="copy-btn" onclick="copyCode()">Copy</button>
-      <code>bash &lt;(curl -fsSL https://notr8.codeberg.page/.scripts/ma/install.sh)</code>
+      <code>bash &lt;(curl -fsSL https://scripts.soupcan.xyz/ma/install.sh)</code>
     </div>
   </header>
 
@@ -104,7 +104,7 @@
 
   <script>
     function copyCode() {
-      const code = "bash <(curl -fsSL https://notr8.codeberg.page/.scripts/ma/install.sh)";
+      const code = "bash <(curl -fsSL https://scripts.soupcan.xyz/ma/install.sh)";
       navigator.clipboard.writeText(code).then(() => {
         const btn = document.querySelector('.copy-btn');
         btn.textContent = "Copied!";
